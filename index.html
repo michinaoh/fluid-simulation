@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>流体力学 インタラクティブ・シミュレーター</title>
+<title>Fluid Mechanics — Interactive Simulators</title>
 <style>
   :root{
     --bg:#0c1418; --bg2:#0f1d23; --panel:#122930; --ink:#e7f1ef;
@@ -61,18 +61,18 @@
 <div class="wrap">
   <header>
     <div class="langsw" role="group" aria-label="Language">
-      <button data-lang="en">English</button>
+      <button data-lang="en" class="active">English</button>
       <button data-lang="zh">中文</button>
-      <button data-lang="ja" class="active">日本語</button>
+      <button data-lang="ja">日本語</button>
     </div>
     <div class="kicker" id="kicker">Fluid Mechanics · Interactive</div>
-    <h1 id="title">流体力学 <em>シミュレーター</em></h1>
-    <p class="sub" id="sub">学びたいテーマを選んでください。各シミュレーターはブラウザだけで動き、パラメータを変えながら物理を体感できます。</p>
+    <h1 id="title">Fluid Mechanics <em>Simulators</em></h1>
+    <p class="sub" id="sub">Pick a topic to explore. Each simulator runs entirely in your browser — change the parameters and feel the physics.</p>
   </header>
 
   <div class="grid" id="grid"></div>
 
-  <p class="foot" id="foot">新しいシミュレーターは、HTML ファイルを追加して下の <code>SIMS</code> 配列に1項目足すだけで、この画面に並びます。</p>
+  <p class="foot" id="foot">To add a new simulator, drop in an HTML file and add one entry to the <code>SIMS</code> array in the code.</p>
 </div>
 
 <script>
@@ -118,7 +118,7 @@
          foot:'要添加新的模拟器，只需放入一个 HTML 文件，并在代码中的 <code>SIMS</code> 数组里添加一项。' }
   };
 
-  let lang="ja";
+  let lang="en";
   const grid=document.getElementById('grid');
 
   function render(){
