@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>斜面を流れる粘性流体 — 速度分布シミュレーション</title>
+<title>Viscous Film Flow on a Slope — Velocity Profile Simulation</title>
 <style>
   :root{
     --bg:        #0c1418;
@@ -134,63 +134,61 @@
 <div class="wrap">
   <header>
     <div class="langsw" role="group" aria-label="Language">
-      <button data-lang="en">English</button>
+      <button data-lang="en" class="active">English</button>
       <button data-lang="zh">中文</button>
-      <button data-lang="ja" class="active">日本語</button>
+      <button data-lang="ja">日本語</button>
     </div>
-    <div class="kicker" data-i18n="kicker">Fluid Mechanics · 粘性のデモ</div>
-    <h1 data-i18n="h1">斜面を流れる<em>粘性流体</em>の速度分布</h1>
-    <p class="sub" data-i18n="sub">一定の厚みの液膜が重力で斜面を流れるときの定常層流（Nusselt 膜流れ）。
-    速度はベクトルの長さで表しています。壁では速度ゼロ（すべりなし条件）、自由表面で最大の
-    <b style="color:var(--vec)">放物線状</b>の分布になります。粘性 μ を上げると全体が遅くなる — これが粘性の効果です。</p>
+    <div class="kicker" data-i18n="kicker">Fluid Mechanics · Viscosity Demo</div>
+    <h1 data-i18n="h1">Velocity profile of a <em>viscous fluid</em> on a slope</h1>
+    <p class="sub" data-i18n="sub">Steady laminar flow of a film of constant thickness running down a slope under gravity (Nusselt film flow). Velocity is shown by the length of each vector: zero at the wall (no-slip condition) and maximum at the free surface — a <b style="color:var(--vec)">parabolic</b> profile. Raising the viscosity μ slows everything down — that is the effect of viscosity.</p>
   </header>
 
   <div class="grid">
     <div class="stage">
       <div class="legend">
-        <div class="row"><span class="swatch" style="background:var(--vec)"></span><span data-i18n="legVec">速度ベクトル u(y)</span></div>
-        <div class="row"><span class="swatch" style="background:var(--shear)"></span><span data-i18n="legShear">せん断応力 τ(y)</span></div>
-        <div class="row"><span class="swatch" style="background:var(--fluid)"></span><span data-i18n="legFluid">自由表面・流体</span></div>
-        <div class="row"><span class="swatch" style="background:var(--grav)"></span><span data-i18n="legGrav">重力 g</span></div>
+        <div class="row"><span class="swatch" style="background:var(--vec)"></span><span data-i18n="legVec">Velocity vector u(y)</span></div>
+        <div class="row"><span class="swatch" style="background:var(--shear)"></span><span data-i18n="legShear">Shear stress τ(y)</span></div>
+        <div class="row"><span class="swatch" style="background:var(--fluid)"></span><span data-i18n="legFluid">Free surface / fluid</span></div>
+        <div class="row"><span class="swatch" style="background:var(--grav)"></span><span data-i18n="legGrav">Gravity g</span></div>
       </div>
       <canvas id="cv"></canvas>
     </div>
 
     <div class="panel">
       <div class="ctrl">
-        <label><span data-i18n="ctrlAngle">坂の角度 θ</span> <span class="val"><span id="vAngle">22</span><span>°</span></span></label>
+        <label><span data-i18n="ctrlAngle">Slope angle θ</span> <span class="val"><span id="vAngle">22</span><span>°</span></span></label>
         <input id="angle" type="range" min="0" max="90" step="0.5" value="22">
       </div>
       <div class="ctrl">
-        <label><span data-i18n="ctrlH">流体の厚み h</span> <span class="val"><span id="vH">1.2</span><span> mm</span></span></label>
+        <label><span data-i18n="ctrlH">Film thickness h</span> <span class="val"><span id="vH">1.2</span><span> mm</span></span></label>
         <input id="h" type="range" min="0.3" max="5" step="0.05" value="1.2">
       </div>
       <div class="ctrl">
-        <label><span data-i18n="ctrlMu">粘性 μ</span> <span class="val"><span id="vMu">4</span><span> mPa·s</span></span></label>
+        <label><span data-i18n="ctrlMu">Viscosity μ</span> <span class="val"><span id="vMu">4</span><span> mPa·s</span></span></label>
         <input id="mu" type="range" min="1" max="40" step="0.5" value="4">
       </div>
 
       <div class="presets">
-        <button data-mu="1" data-i18n="presetWater">水 (1)</button>
-        <button data-mu="8" data-i18n="presetOil">油 (8)</button>
-        <button data-mu="40" data-i18n="presetHoney">蜂蜜 (40)</button>
+        <button data-mu="1" data-i18n="presetWater">Water (1)</button>
+        <button data-mu="8" data-i18n="presetOil">Oil (8)</button>
+        <button data-mu="40" data-i18n="presetHoney">Honey (40)</button>
       </div>
 
       <div class="seg-wrap">
-        <span class="seg-label" data-i18n="ctrlShow">表示</span>
+        <span class="seg-label" data-i18n="ctrlShow">Display</span>
         <div class="seg" role="group">
-          <button data-show="v" class="active" data-i18n="showV">速度</button>
-          <button data-show="s" data-i18n="showS">せん断応力</button>
-          <button data-show="both" data-i18n="showBoth">両方</button>
+          <button data-show="v" class="active" data-i18n="showV">Velocity</button>
+          <button data-show="s" data-i18n="showS">Shear stress</button>
+          <button data-show="both" data-i18n="showBoth">Both</button>
         </div>
       </div>
 
       <div class="readout">
-        <div class="stat"><span class="k" data-i18n="statSurf">表面速度 u(h)</span><span class="v amber" id="oSurf">–</span></div>
-        <div class="stat"><span class="k" data-i18n="statMean">平均速度 ū</span><span class="v" id="oMean">–</span></div>
-        <div class="stat"><span class="k" data-i18n="statQ">流量 q（単位幅あたり）</span><span class="v" id="oQ">–</span></div>
-        <div class="stat"><span class="k" data-i18n="statRe">レイノルズ数 Re</span><span class="v" id="oRe">–</span></div>
-        <div class="stat"><span class="k" data-i18n="statTau">壁面せん断応力 τw</span><span class="v shear" id="oTau">–</span></div>
+        <div class="stat"><span class="k" data-i18n="statSurf">Surface velocity u(h)</span><span class="v amber" id="oSurf">–</span></div>
+        <div class="stat"><span class="k" data-i18n="statMean">Mean velocity ū</span><span class="v" id="oMean">–</span></div>
+        <div class="stat"><span class="k" data-i18n="statQ">Flow rate q (per unit width)</span><span class="v" id="oQ">–</span></div>
+        <div class="stat"><span class="k" data-i18n="statRe">Reynolds number Re</span><span class="v" id="oRe">–</span></div>
+        <div class="stat"><span class="k" data-i18n="statTau">Wall shear stress τw</span><span class="v shear" id="oTau">–</span></div>
       </div>
 
       <div class="formula">
@@ -198,16 +196,13 @@
           <span class="frac"><span>ρ g sinθ</span><span>μ</span></span>
           ( h y − <span class="frac"><span>y²</span><span>2</span></span> )</span>
       </div>
-      <p class="note" data-i18n="note">y は壁面（y=0）から自由表面（y=h）までの高さ。表面速度は
-        <b>u(h) ∝ h²·sinθ / μ</b> なので、厚みを2倍にすると約4倍、粘性を2倍にすると約半分になります。</p>
-      <p class="note" data-i18n="noteTau">せん断応力 τ(y)=ρg sinθ(h−y) は壁面で最大・自由表面でゼロの直線分布で、粘性 μ には依存しません。重力で決まる応力を、粘性が速度に変換しています。</p>
+      <p class="note" data-i18n="note">y is the height from the wall (y=0) to the free surface (y=h). Since the surface velocity <b>u(h) ∝ h²·sinθ / μ</b>, doubling the thickness makes it about 4× faster and doubling the viscosity halves it.</p>
+      <p class="note" data-i18n="noteTau">The shear stress τ(y)=ρg sinθ(h−y) is linear — maximum at the wall and zero at the free surface — and does not depend on μ. Gravity sets the stress; viscosity converts it into velocity. In the Both view, τ is shown as a violet triangle with a dashed envelope, pointing in the same flow direction.</p>
     </div>
   </div>
 
   <p class="foot">
-    <span class="pill" data-i18n="pill">層流の仮定</span> <span data-i18n="foot">密度 ρ = 1000 kg/m³、g = 9.81 m/s² を一定としています。
-    ベクトルの縮尺は固定なので、角度・厚み・粘性を変えたときの長さの違いがそのまま速度の違いを表します。
-    Re が数百を超えると実際には波立ち（層流の仮定が崩れ始める）が起こります。</span>
+    <span class="pill" data-i18n="pill">Laminar assumption</span> <span data-i18n="foot">Density ρ = 1000 kg/m³ and g = 9.81 m/s² are held constant. The vector scale is fixed, so differences in length when you change the angle, thickness, or viscosity directly reflect differences in speed. Once Re exceeds a few hundred, surface waves appear in reality and the laminar assumption begins to break down.</span>
   </p>
 </div>
 
@@ -272,7 +267,7 @@
       noteTau:'剪应力 τ(y)=ρg sinθ(h−y) 呈线性分布——壁面处最大、自由表面处为零，且与黏度 μ 无关。重力决定应力，黏性将其转化为速度。在“两者”视图中，τ 以紫色三角形和虚线包络表示，并与流动方向一致。'
     }
   };
-  let lang="ja";
+  let lang="en";
   let T=I18N[lang];
 
   const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
@@ -405,7 +400,7 @@
 
     // 自由表面ライン
     ctx.strokeStyle=getCss('--fluid'); ctx.lineWidth=2;
-    ctx.beginPath(); ctx.moveTo(t0.x,t0.y); ctx.lineTo(t1.x,t1.y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(t0.x,t0.y); ctx.lineTo(t1.x,t1.y); stroke();
     // 壁ライン
     ctx.strokeStyle='rgba(127,163,160,0.7)'; ctx.lineWidth=2;
     ctx.beginPath(); ctx.moveTo(w0.x,w0.y); ctx.lineTo(w1.x,w1.y); ctx.stroke();
@@ -425,7 +420,6 @@
     const showS = state.show!=='v';
 
     // === せん断応力 τ(y)=ρg sinθ(h−y)：壁で最大・表面でゼロの直線分布 ===
-    // 常に流れの方向（斜面下向き）に描く。速度との区別は、塗り三角形・破線の包絡線・色で行う
     let tauWallTip=null;
     if(showS){
       const sd = {x:d.x, y:d.y};
@@ -441,7 +435,7 @@
       ctx.beginPath(); ctx.moveTo(cutW.x,cutW.y);
       for(const t of stips) ctx.lineTo(t.x,t.y);
       ctx.lineTo(cutT.x,cutT.y); ctx.closePath(); ctx.fill();
-      // 全層の矢印（半透明にして、上に重なる速度と区別）
+      // 全層の矢印
       for(let i=0;i<=M;i++){
         const t=stips[i];
         arrow(t.bx,t.by,t.x,t.y, i===0?getCss('--shear-bright'):'rgba(199,146,234,0.75)', i===0?2.6:1.7);
@@ -501,11 +495,10 @@
   }
 
   function drawAngleArc(origin, d, th){
-    // 水平線と斜面の間の角度を origin（壁の上端付近）に描く
     const r=46;
     const ax=origin.x, ay=origin.y;
     ctx.strokeStyle='rgba(127,163,160,0.5)'; ctx.lineWidth=1; ctx.setLineDash([3,3]);
-    ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(ax+r*1.4,ay); ctx.stroke();   // 水平参照
+    ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(ax+r*1.4,ay); ctx.stroke();
     ctx.setLineDash([]);
     ctx.beginPath(); ctx.arc(ax,ay,r,0,th); ctx.stroke();
     ctx.fillStyle=getCss('--muted'); ctx.font='15px "Calibri","Segoe UI","Meiryo",sans-serif';
