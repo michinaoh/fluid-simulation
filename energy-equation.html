@@ -351,23 +351,15 @@
 
     const z2 = z1 + hp - ht - hl;
 
-    const x0 = 125, xIn = 190, xP = 312, xA = 420, xT = 532, xOut = 620, x3 = 680;
+    const x0 = 190, xP = 312, xA = 420, xT = 532, x3 = 620;
     const lossPer = hl / (x3 - x0);
-    const E = x => {
-      let e = z1 - lossPer * (x - x0);
-      if (x >= xP) e += hp;
-      if (x >= xT) e -= ht;
-      return e;
-    };
 
     const E1 = z1;
-    const E_in      = E(xIn);
     const E_pumpIn  = z1 - lossPer * (xP - x0);
     const E_pumpOut = E_pumpIn + hp;
     const E_turbIn  = E_pumpOut - lossPer * (xT - xP);
     const E_turbOut = E_turbIn - ht;
-    const E_out     = E(xOut);
-    const E2        = E(x3);
+    const E2        = E_turbOut - lossPer * (x3 - xT);
 
     const toPts = arr => arr.map(p => p[0] + ',' + yOf(p[1]).toFixed(1)).join(' ');
 
@@ -377,15 +369,15 @@
     ]));
 
     $('hgl').setAttribute('points', toPts([
-      [x0, E1], [xIn, E_in], [xIn, E_in - hv],
+      [x0, E1], [x0, E1 - hv],
       [xP, E_pumpIn - hv], [xP, E_pumpOut - hv],
       [xT, E_turbIn - hv], [xT, E_turbOut - hv],
-      [xOut, E_out - hv], [xOut, E_out], [x3, E2]
+      [x3, E2 - hv], [x3, E2]
     ]));
 
     const topY = yOf(Math.max(E_pumpOut, E1));
     $('egl-label').setAttribute('y', Math.max(58, topY - 14).toFixed(0));
-    $('hgl-label').setAttribute('y', (yOf(E_in - hv) + 18).toFixed(0));
+    $('hgl-label').setAttribute('y', (yOf(E1 - hv) + 18).toFixed(0));
 
     const z2c = Math.max(2, Math.min(z2, 75));
     const yw = yOf(z2c);
