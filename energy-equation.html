@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Energy Equation — Pump, Turbine &amp; Head Loss</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1b2a3a;
+    --ink-soft: #5b6b7c;
+    --paper: #f7f9fb;
+    --card: #ffffff;
+    --line: #dde4ea;
+    --water: #4a90d9;
+    --water-light: #a8cbee;
+    --egl: #c07a10;
+    --hgl: #2e6fb8;
+    --pump: #0f7d63;
+    --turbine: #c0512e;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    font-family: "IBM Plex Sans", sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+    padding: 2.5rem 1.25rem 4rem;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+
+  header { margin-bottom: 2rem; }
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 0.5rem;
+  }
+  h1 { font-size: clamp(1.5rem, 4vw, 2.1rem); font-weight: 600; letter-spacing: -0.01em; }
+  header p { color: var(--ink-soft); max-width: 62ch; margin-top: 0.5rem; font-size: 15px; }
+
+  .equation {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: clamp(12px, 2.4vw, 15px);
+    text-align: center;
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .equation .frac { display: inline-flex; flex-direction: column; vertical-align: middle; line-height: 1.15; }
+  .equation .frac span:first-child { border-bottom: 1px solid var(--ink); padding: 0 3px; }
+  .equation .hp { color: var(--pump); font-weight: 500; }
+  .equation .ht { color: var(--turbine); font-weight: 500; }
+  .equation .hl { color: var(--egl); font-weight: 500; }
+  .equation .pv { color: var(--hgl); font-weight: 500; }
+
+  .controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .control {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 0.9rem 1rem;
+  }
+  .control label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 0.5rem;
+  }
+  .control output {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .control.pump     { border-top: 3px solid var(--pump); }
+  .control.turbine  { border-top: 3px solid var(--turbine); }
+  .control.loss     { border-top: 3px solid var(--egl); }
+  .control.velocity { border-top: 3px solid var(--hgl); }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--line);
+    outline: none;
+    cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--ink);
+    border: 3px solid var(--card);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--ink);
+    border: 3px solid var(--card);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+
+  figure {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  svg { display: block; width: 100%; height: auto; }
+  .svg-label { font-family: "IBM Plex Sans", sans-serif; font-size: 12px; fill: var(--ink-soft); }
+  .svg-label.strong { font-weight: 500; fill: var(--ink); }
+  .svg-mono { font-family: "IBM Plex Mono", monospace; font-size: 12px; fill: var(--ink); }
+
+  .readouts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .readout {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 0.9rem 1rem;
+  }
+  .readout .k { font-size: 12px; color: var(--ink-soft); margin-bottom: 2px; }
+  .readout .v { font-family: "IBM Plex Mono", monospace; font-size: 22px; font-weight: 500; }
+  .readout.balance .v { color: var(--pump); }
+
+  .notes { color: var(--ink-soft); font-size: 14px; max-width: 70ch; }
+  .notes h2 { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 0.4rem; }
+  .notes p + p { margin-top: 0.6rem; }
+  .notes .swatch {
+    display: inline-block; width: 10px; height: 10px; border-radius: 2px;
+    margin-right: 4px; vertical-align: baseline;
+  }
+  .notes code {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 13px;
+    background: #eef2f6;
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: var(--ink);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    #egl, #hgl, #wl2 { transition: all 0.15s ease-out; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Fluid mechanics · interactive figure</div>
+    <h1>The energy equation with a pump, a turbine, and head loss</h1>
+    <p>Two reservoirs connected by a pipeline. Drag the sliders and watch both grade lines respond:
+       the <strong style="color:var(--egl)">EGL</strong> (total head) and the
+       <strong style="color:var(--hgl)">HGL</strong> (piezometric head). The dimension stack in the middle of the pipe
+       shows how the total head at that section splits into elevation z, pressure head p/&gamma;, and velocity head V&sup2;/2g.</p>
+  </header>
+
+  <div class="equation" aria-label="Energy equation">
+    <span class="pv"><span class="frac"><span>p&#8321;</span><span>&gamma;</span></span></span> +
+    <span class="pv"><span class="frac"><span>V&#8321;&sup2;</span><span>2g</span></span></span> +
+    z&#8321; + <span class="hp">h&#8202;<sub>p</sub></span>
+    &nbsp;=&nbsp;
+    <span class="pv"><span class="frac"><span>p&#8322;</span><span>&gamma;</span></span></span> +
+    <span class="pv"><span class="frac"><span>V&#8322;&sup2;</span><span>2g</span></span></span> +
+    z&#8322; + <span class="ht">h&#8202;<sub>t</sub></span> + <span class="hl">h&#8202;<sub>L</sub></span>
+  </div>
+
+  <div class="controls">
+    <div class="control pump">
+      <label for="hp">Pump head h<sub>p</sub> <output id="hp-out">20 m</output></label>
+      <input type="range" id="hp" min="0" max="40" step="1" value="20">
+    </div>
+    <div class="control turbine">
+      <label for="ht">Turbine head h<sub>t</sub> <output id="ht-out">10 m</output></label>
+      <input type="range" id="ht" min="0" max="40" step="1" value="10">
+    </div>
+    <div class="control loss">
+      <label for="hl">Head loss h<sub>L</sub> <output id="hl-out">15 m</output></label>
+      <input type="range" id="hl" min="0" max="30" step="1" value="15">
+    </div>
+    <div class="control velocity">
+      <label for="hv">Velocity head V&sup2;/2g <output id="hv-out">6 m</output></label>
+      <input type="range" id="hv" min="0" max="15" step="1" value="6">
+    </div>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 800 470" role="img" aria-label="Cross-section of two reservoirs connected by a pipe with a pump and a turbine. The energy grade line steps up at the pump and down at the turbine while sloping downward from friction; the hydraulic grade line runs parallel below it, offset by the velocity head. A vertical dimension stack shows elevation z, pressure head, and velocity head.">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+
+      <!-- Datum -->
+      <line x1="40" y1="420" x2="760" y2="420" stroke="#9aa8b5" stroke-width="1" stroke-dasharray="6 4"/>
+      <text class="svg-label" x="42" y="440">Datum (z = 0)</text>
+
+      <!-- Reservoir 1 -->
+      <rect id="wl1" x="60" y="222" width="130" height="198" fill="#a8cbee" opacity="0.75"/>
+      <path d="M60 420V194 M190 420V194" stroke="#1b2a3a" stroke-width="2" fill="none"/>
+      <text class="svg-label strong" x="125" y="184" text-anchor="middle">Reservoir 1</text>
+      <text class="svg-mono" id="z1-label" x="125" y="244" text-anchor="middle">z&#8321; = 60 m</text>
+
+      <!-- Reservoir 2 -->
+      <rect id="wl2" x="620" y="238" width="120" height="182" fill="#a8cbee" opacity="0.75"/>
+      <path d="M620 420V154 M740 420V154" stroke="#1b2a3a" stroke-width="2" fill="none"/>
+      <text class="svg-label strong" x="680" y="144" text-anchor="middle">Reservoir 2</text>
+      <text class="svg-mono" id="z2-label" x="680" y="260" text-anchor="middle">z&#8322; = 55 m</text>
+
+      <!-- Pipe (centerline at y=387, elevation 10 m) -->
+      <path d="M190 387H620" stroke="#1b2a3a" stroke-width="9" opacity="0.15" fill="none"/>
+      <path d="M190 387H286 M338 387H506 M558 387H620" stroke="#1b2a3a" stroke-width="4" fill="none"/>
+      <line x1="216" y1="387" x2="256" y2="387" stroke="#4a90d9" stroke-width="2" marker-end="url(#arrow)"/>
+      <text class="svg-label" x="236" y="376" text-anchor="middle">Flow</text>
+
+      <!-- Pump -->
+      <circle cx="312" cy="387" r="26" fill="#e2f3ee" stroke="#0f7d63" stroke-width="2"/>
+      <text x="312" y="387" text-anchor="middle" dominant-baseline="central"
+            style="font-family:'IBM Plex Sans';font-size:15px;font-weight:600;fill:#0f7d63">P</text>
+      <text class="svg-label" x="312" y="438" text-anchor="middle">Pump  (+h&#8202;p)</text>
+
+      <!-- Turbine -->
+      <rect x="506" y="361" width="52" height="52" rx="9" fill="#faeae3" stroke="#c0512e" stroke-width="2"/>
+      <text x="532" y="387" text-anchor="middle" dominant-baseline="central"
+            style="font-family:'IBM Plex Sans';font-size:15px;font-weight:600;fill:#c0512e">T</text>
+      <text class="svg-label" x="532" y="438" text-anchor="middle">Turbine  (&minus;h&#8202;t)</text>
+
+      <!-- Hydraulic grade line (HGL = z + p/γ) -->
+      <polyline id="hgl" points="" fill="none" stroke="#2e6fb8" stroke-width="2" stroke-dasharray="7 5" stroke-linejoin="round"/>
+      <text id="hgl-label" x="235" y="0" text-anchor="middle"
+            style="font-family:'IBM Plex Sans';font-size:12px;font-weight:500;fill:#2e6fb8">HGL = z + p/&gamma;</text>
+
+      <!-- Energy grade line (EGL = z + p/γ + V²/2g) -->
+      <polyline id="egl" points="" fill="none" stroke="#c07a10" stroke-width="2.5" stroke-linejoin="round"/>
+      <text id="egl-label" x="410" y="100" text-anchor="middle"
+            style="font-family:'IBM Plex Sans';font-size:12px;font-weight:500;fill:#c07a10">EGL = z + p/&gamma; + V&sup2;/2g</text>
+
+      <!-- Head decomposition stack at x = 420 -->
+      <g id="stack" style="font-family:'IBM Plex Mono';font-size:12px">
+        <!-- ticks -->
+        <line id="tick-egl"  x1="412" x2="428" stroke="#c07a10" stroke-width="1.5"/>
+        <line id="tick-hgl"  x1="412" x2="428" stroke="#2e6fb8" stroke-width="1.5"/>
+        <line id="tick-pipe" x1="412" y1="387" x2="428" y2="387" stroke="#5b6b7c" stroke-width="1.5"/>
+        <line id="tick-dat"  x1="412" y1="420" x2="428" y2="420" stroke="#5b6b7c" stroke-width="1.5"/>
+        <!-- segments -->
+        <line id="seg-v" x1="420" x2="420" stroke="#c07a10" stroke-width="2"/>
+        <line id="seg-p" x1="420" x2="420" stroke="#2e6fb8" stroke-width="2"/>
+        <line id="seg-z" x1="420" x2="420" y1="389" y2="418" stroke="#5b6b7c" stroke-width="2"/>
+        <!-- labels -->
+        <text id="lab-v" x="432" fill="#c07a10">V&sup2;/2g</text>
+        <text id="lab-p" x="432" fill="#2e6fb8">p/&gamma;</text>
+        <text id="lab-z" x="432" y="408" fill="#5b6b7c">z</text>
+      </g>
+    </svg>
+  </figure>
+
+  <div class="readouts">
+    <div class="readout">
+      <div class="k">Left side &nbsp;z&#8321; + h<sub>p</sub></div>
+      <div class="v" id="lhs">80 m</div>
+    </div>
+    <div class="readout">
+      <div class="k">Right side &nbsp;z&#8322; + h<sub>t</sub> + h<sub>L</sub></div>
+      <div class="v" id="rhs">80 m</div>
+    </div>
+    <div class="readout">
+      <div class="k">Downstream level z&#8322;</div>
+      <div class="v" id="z2v">55 m</div>
+    </div>
+    <div class="readout">
+      <div class="k">p/&gamma; at mid-pipe</div>
+      <div class="v" id="pv">— m</div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <h2>How to read the figure</h2>
+    <p>
+      The <span class="swatch" style="background:#c07a10"></span><strong style="color:var(--egl)">amber EGL</strong>
+      (energy grade line) is the total head <code>z + p/&gamma; + V&sup2;/2g</code>. It slopes gently downward because of
+      friction (h<sub>L</sub>), jumps up by h<sub>p</sub> at the
+      <span class="swatch" style="background:#0f7d63"></span><strong style="color:var(--pump)">pump</strong> (energy added),
+      and drops by h<sub>t</sub> at the
+      <span class="swatch" style="background:#c0512e"></span><strong style="color:var(--turbine)">turbine</strong>
+      (energy extracted as shaft work).
+    </p>
+    <p>
+      The <span class="swatch" style="background:#2e6fb8"></span><strong style="color:var(--hgl)">blue dashed HGL</strong>
+      (hydraulic grade line) is the piezometric head <code>z + p/&gamma;</code> — the level water would reach in a
+      piezometer tube tapped into the pipe. It runs exactly <code>V&sup2;/2g</code> below the EGL. In the still reservoirs
+      the velocity is ~0, so the two lines merge at the water surfaces; the HGL drops abruptly where the flow accelerates
+      into the pipe and recovers where it decelerates back into reservoir 2.
+    </p>
+    <p>
+      The vertical stack halfway along the pipe dissects the total head at that section into its three parts:
+      <strong style="color:var(--ink)">z</strong> is the height of the pipe above the datum,
+      <strong style="color:var(--hgl)">p/&gamma;</strong> is the gap from the pipe up to the HGL, and
+      <strong style="color:var(--egl)">V&sup2;/2g</strong> is the gap from the HGL up to the EGL.
+      Try raising the velocity head: p/&gamma; shrinks while the EGL stays put — kinetic energy trades off against
+      pressure, which is Bernoulli’s principle sitting inside the energy equation.
+    </p>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  const z1 = 60;
+  const zPipe = 10;
+  const yOf = E => 420 - E * 3.3;
+
+  const $ = id => document.getElementById(id);
+  const setAttrs = (el, attrs) => { for (const k in attrs) el.setAttribute(k, attrs[k]); };
+
+  function update() {
+    const hp = +$('hp').value;
+    const ht = +$('ht').value;
+    const hl = +$('hl').value;
+    const hv = +$('hv').value;
+
+    $('hp-out').textContent = hp + ' m';
+    $('ht-out').textContent = ht + ' m';
+    $('hl-out').textContent = hl + ' m';
+    $('hv-out').textContent = hv + ' m';
+
+    const z2 = z1 + hp - ht - hl;
+
+    const x0 = 125, xIn = 190, xP = 312, xA = 420, xT = 532, xOut = 620, x3 = 680;
+    const lossPer = hl / (x3 - x0);
+    const E = x => {
+      let e = z1 - lossPer * (x - x0);
+      if (x >= xP) e += hp;
+      if (x >= xT) e -= ht;
+      return e;
+    };
+
+    const E1 = z1;
+    const E_in      = E(xIn);
+    const E_pumpIn  = z1 - lossPer * (xP - x0);
+    const E_pumpOut = E_pumpIn + hp;
+    const E_turbIn  = E_pumpOut - lossPer * (xT - xP);
+    const E_turbOut = E_turbIn - ht;
+    const E_out     = E(xOut);
+    const E2        = E(x3);
+
+    const toPts = arr => arr.map(p => p[0] + ',' + yOf(p[1]).toFixed(1)).join(' ');
+
+    $('egl').setAttribute('points', toPts([
+      [x0, E1], [xP, E_pumpIn], [xP, E_pumpOut],
+      [xT, E_turbIn], [xT, E_turbOut], [x3, E2]
+    ]));
+
+    $('hgl').setAttribute('points', toPts([
+      [x0, E1], [xIn, E_in], [xIn, E_in - hv],
+      [xP, E_pumpIn - hv], [xP, E_pumpOut - hv],
+      [xT, E_turbIn - hv], [xT, E_turbOut - hv],
+      [xOut, E_out - hv], [xOut, E_out], [x3, E2]
+    ]));
+
+    const topY = yOf(Math.max(E_pumpOut, E1));
+    $('egl-label').setAttribute('y', Math.max(58, topY - 14).toFixed(0));
+    $('hgl-label').setAttribute('y', (yOf(E_in - hv) + 18).toFixed(0));
+
+    const z2c = Math.max(2, Math.min(z2, 75));
+    const yw = yOf(z2c);
+    $('wl2').setAttribute('y', yw.toFixed(1));
+    $('wl2').setAttribute('height', (420 - yw).toFixed(1));
+    $('z2-label').setAttribute('y', (yw + 22).toFixed(1));
+    $('z2-label').textContent = 'z\u2082 = ' + z2 + ' m';
+
+    // ---- Head decomposition stack at x = xA ----
+    const E_A = E_pumpOut - lossPer * (xA - xP);   // total head at mid-pipe
+    const H_A = E_A - hv;                          // piezometric head
+    const pOverGamma = H_A - zPipe;                // pressure head
+
+    const yE = yOf(E_A), yH = yOf(H_A), yP = 387;
+
+    setAttrs($('tick-egl'), { y1: yE.toFixed(1), y2: yE.toFixed(1) });
+    setAttrs($('tick-hgl'), { y1: yH.toFixed(1), y2: yH.toFixed(1) });
+
+    setAttrs($('seg-v'), { y1: (yE + 2).toFixed(1), y2: (yH - 2).toFixed(1) });
+    setAttrs($('seg-p'), { y1: (yH + 2).toFixed(1), y2: (yP - 2).toFixed(1) });
+
+    $('lab-v').setAttribute('y', ((yE + yH) / 2 + 4).toFixed(1));
+    $('lab-p').setAttribute('y', ((yH + yP) / 2 + 4).toFixed(1));
+    $('lab-v').style.display = hv > 0 ? '' : 'none';
+    $('seg-v').style.display = hv > 0 ? '' : 'none';
+
+    $('lhs').textContent = (z1 + hp) + ' m';
+    $('rhs').textContent = (z2 + ht + hl) + ' m';
+    $('z2v').textContent = z2 + ' m';
+    $('pv').textContent = pOverGamma.toFixed(1) + ' m';
+  }
+
+  ['hp', 'ht', 'hl', 'hv'].forEach(id => $(id).addEventListener('input', update));
+  update();
+})();
+</script>
+</body>
+</html>
