@@ -82,7 +82,8 @@
     slope:'<svg class="icon" viewBox="0 0 64 48"><line x1="4" y1="40" x2="60" y2="14" stroke="#7fa3a0" stroke-width="3"/><g stroke="#ffb74d" stroke-width="2.4" stroke-linecap="round"><line x1="16" y1="33" x2="30" y2="27"/><line x1="22" y1="29" x2="34" y2="24"/><line x1="30" y1="24" x2="40" y2="20"/></g><line x1="20" y1="36" x2="20" y2="29" stroke="#41d6c3" stroke-width="2"/></svg>',
     pipe:'<svg class="icon" viewBox="0 0 64 48"><rect x="6" y="14" width="52" height="20" rx="3" fill="none" stroke="#7fa3a0" stroke-width="3"/><path d="M10 24 Q32 8 54 24" fill="none" stroke="#ffb74d" stroke-width="2.4"/><g stroke="#41d6c3" stroke-width="2" stroke-linecap="round"><line x1="18" y1="24" x2="27" y2="24"/><line x1="32" y1="24" x2="44" y2="24"/></g></svg>',
     vortex:'<svg class="icon" viewBox="0 0 64 48"><circle cx="22" cy="24" r="9" fill="none" stroke="#7fa3a0" stroke-width="3"/><path d="M33 18 q9 6 0 12 M40 14 q14 10 0 20" fill="none" stroke="#c792ea" stroke-width="2.4"/><g stroke="#41d6c3" stroke-width="2" stroke-linecap="round"><line x1="2" y1="18" x2="11" y2="18"/><line x1="2" y1="30" x2="11" y2="30"/></g></svg>',
-    bernoulli:'<svg class="icon" viewBox="0 0 64 48"><path d="M4 12 H26 Q34 12 38 22 Q42 32 60 32 M4 36 H26 Q34 36 38 26 Q42 16 60 16" fill="none" stroke="#7fa3a0" stroke-width="3"/><g stroke="#41d6c3" stroke-width="2" stroke-linecap="round"><line x1="10" y1="24" x2="19" y2="24"/></g><g stroke="#ffb74d" stroke-width="2.4" stroke-linecap="round"><line x1="44" y1="24" x2="57" y2="24"/><polyline points="52,20 57,24 52,28" fill="none"/></g></svg>'
+    bernoulli:'<svg class="icon" viewBox="0 0 64 48"><path d="M4 12 H26 Q34 12 38 22 Q42 32 60 32 M4 36 H26 Q34 36 38 26 Q42 16 60 16" fill="none" stroke="#7fa3a0" stroke-width="3"/><g stroke="#41d6c3" stroke-width="2" stroke-linecap="round"><line x1="10" y1="24" x2="19" y2="24"/></g><g stroke="#ffb74d" stroke-width="2.4" stroke-linecap="round"><line x1="44" y1="24" x2="57" y2="24"/><polyline points="52,20 57,24 52,28" fill="none"/></g></svg>',
+    energy:'<svg class="icon" viewBox="0 0 64 48"><line x1="4" y1="40" x2="60" y2="40" stroke="#7fa3a0" stroke-width="2" stroke-dasharray="4 3"/><line x1="8" y1="32" x2="56" y2="32" stroke="#7fa3a0" stroke-width="3"/><polyline points="6,16 20,18 20,8 40,11 40,22 58,24" fill="none" stroke="#ffb74d" stroke-width="2.4" stroke-linejoin="round"/><circle cx="20" cy="32" r="5" fill="none" stroke="#41d6c3" stroke-width="2.4"/><rect x="36" y="27.5" width="9" height="9" rx="2" fill="none" stroke="#c792ea" stroke-width="2.4"/></svg>'
   };
 
   // ▼ シミュレーター一覧（ここに項目を足すだけで画面に並びます）
@@ -94,7 +95,11 @@
     { href:"bernoulli-4.html", color:"var(--fluid)", icon:"bernoulli",
       t:{ en:{title:"Bernoulli's Principle", desc:"Relating velocity, height, and pressure of a flow."},
           ja:{title:"ベルヌーイの定理", desc:"流れの速度・高さ・圧力の関係を可視化。流路の太さを変えて、速いところほど圧力が下がる様子を確かめられます。"},
-          zh:{title:"伯努利定律", desc:"可视化流动的速度、高度与压力之间的关系。改变流道粗细，观察流速越快处压力越低的现象。"} } },     
+          zh:{title:"伯努利定律", desc:"可视化流动的速度、高度与压力之间的关系。改变流道粗细，观察流速越快处压力越低的现象。"} } },
+    { href:"energy-equation.html", color:"var(--vec)", icon:"energy",
+      t:{ en:{title:"The Energy Equation", desc:"Pump, turbine and head loss between two reservoirs. Drag the sliders and watch the EGL and HGL respond — with the head split into z, p/γ and V²/2g."},
+          ja:{title:"エネルギー方程式", desc:"2つの貯水池を結ぶ管路のポンプ・タービン・損失水頭。スライダーで EGL・HGL の変化を観察し、水頭の内訳（z, p/γ, V²/2g）も確認できます。"},
+          zh:{title:"能量方程", desc:"连接两个水库的管路中的泵、水轮机与水头损失。拖动滑块观察能量线（EGL）与测压管水头线（HGL）的变化，并查看水头分解（z、p/γ、V²/2g）。"} } },
     { href:"https://michinaoh.github.io/fluid-simulation/flow_lines_simulator.html", color:"var(--shear)", icon:"vortex",
       t:{ ja:{title:"流線シミュレーター", desc:"流れ場の流線（流れの道筋）を可視化。流速や障害物の配置を変えてパターンの変化を観察できます。"},
           en:{title:"Flow Line Simulator", desc:"Visualize streamlines of a flow field. Change the velocity and obstacle layout to observe how the patterns evolve."},
